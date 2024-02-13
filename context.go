@@ -1,7 +1,7 @@
 package pin
 
 import (
-	"carthooks/galaxy/sidecar/lib/pin/usererrors"
+	"github.com/flaboy/pin/usererrors"
 
 	"github.com/gin-gonic/gin"
 )
