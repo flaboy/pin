@@ -41,7 +41,10 @@ func (c *Context) RenderUserError(message, key string) error {
 
 func (c *Context) RenderResponse(rsp *Response) error {
 	trace_id, _ := c.Get("trace_id")
-	rsp.TraceId = trace_id.(string)
+	switch trace_id := trace_id.(type) {
+	case string:
+		rsp.TraceId = trace_id
+	}
 	c.JSON(200, rsp)
 	return nil
 }
