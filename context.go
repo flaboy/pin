@@ -12,8 +12,8 @@ type Context struct {
 
 func (c *Context) RenderError(err error) error {
 	message := err.Error()
-	if _, ok := err.(*usererrors.Error); ok {
-		return c.RenderUserError(message, message)
+	if userErr, ok := err.(*usererrors.Error); ok {
+		return c.RenderUserError(userErr.Message(), userErr.Code())
 	}
 
 	return c.renderError("system", message, "error.system")
