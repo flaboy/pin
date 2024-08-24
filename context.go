@@ -20,31 +20,37 @@ func (c *Context) RenderError(err error) error {
 }
 
 func (c *Context) renderError(error_type, message, key string) error {
+	code := 200
+	codeV, ok := c.Get("pin.error_code." + error_type)
+	if ok {
+		code = codeV.(int)
+	}
+
 	return c.RenderResponse(&Response{
 		Error: &ResponseError{
 			Message: message,
 			Type:    error_type,
 			Key:     key,
 		},
-	})
+	}, code)
 }
 
 func (c *Context) Render(data any) error {
 	return c.RenderResponse(&Response{
 		Data: data,
-	})
+	}, 200)
 }
 
 func (c *Context) RenderUserError(message, key string) error {
 	return c.renderError("user", message, key)
 }
 
-func (c *Context) RenderResponse(rsp *Response) error {
+func (c *Context) RenderResponse(rsp *Response, code int) error {
 	trace_id, _ := c.Get("trace_id")
 	switch trace_id := trace_id.(type) {
 	case string:
 		rsp.TraceId = trace_id
 	}
-	c.JSON(200, rsp)
+	c.JSON(code, rsp)
 	return nil
 }
