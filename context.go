@@ -10,6 +10,16 @@ type Context struct {
 	*gin.Context
 }
 
+func RenderError(c *gin.Context, err error) error {
+	pinCtx := Context{c}
+	return pinCtx.RenderError(err)
+}
+
+func Render(c *gin.Context, data any) error {
+	pinCtx := Context{c}
+	return pinCtx.Render(data)
+}
+
 func (c *Context) RenderError(err error) error {
 	message := err.Error()
 	if userErr, ok := err.(*usererrors.Error); ok {
