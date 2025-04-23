@@ -10,6 +10,14 @@ type Context struct {
 	*gin.Context
 }
 
+var errorHandler ErrorHandler
+
+type ErrorHandler func(c *gin.Context, err error) error
+
+func SetErrorHandler(h ErrorHandler) {
+	errorHandler = h
+}
+
 func RenderError(c *gin.Context, err error) error {
 	pinCtx := Context{c}
 	return pinCtx.RenderError(err)
@@ -21,11 +29,15 @@ func Render(c *gin.Context, data any) error {
 }
 
 func (c *Context) RenderError(err error) error {
+	if errorHandler != nil {
+		if err := errorHandler(c.Context, err); err != nil {
+			return c.RenderError(err)
+		}
+	}
 	message := err.Error()
 	if userErr, ok := err.(*usererrors.Error); ok {
 		return c.RenderUserError(userErr.Message(), userErr.Code())
 	}
-
 	return c.renderError("system", message, "error.system")
 }
 
