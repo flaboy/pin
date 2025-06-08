@@ -19,7 +19,7 @@ func (e *Error) Message() string {
 	return e.message
 }
 
-func New(code string, message ...string) error {
+func New(code string, message ...string) *Error {
 	err := &Error{
 		code: code,
 	}
