@@ -1,6 +1,8 @@
 package pin
 
 import (
+	"fmt"
+
 	"github.com/flaboy/pin/usererrors"
 
 	"github.com/gin-gonic/gin"
@@ -29,6 +31,7 @@ func Render(c *gin.Context, data any) error {
 }
 
 func (c *Context) RenderError(err error) error {
+	fmt.Println(333333)
 	if errorHandler != nil {
 		if err := errorHandler(c.Context, err); err != nil {
 			return c.RenderError(err)
