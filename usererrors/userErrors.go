@@ -1,6 +1,9 @@
 package usererrors
 
-import "fmt"
+import (
+	"encoding/json"
+	"fmt"
+)
 
 type Error struct {
 	code    string
@@ -9,6 +12,14 @@ type Error struct {
 
 func (e *Error) Error() string {
 	return fmt.Sprintf("%s: %s", e.code, e.message)
+}
+
+func (e *Error) MarshalJSON() ([]byte, error) {
+	mapping := map[string]string{
+		"code":    e.code,
+		"message": e.message,
+	}
+	return json.Marshal(mapping)
 }
 
 func (e *Error) Code() string {
