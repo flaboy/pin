@@ -6,8 +6,9 @@ import (
 )
 
 type Error struct {
-	code    string
-	message string
+	httpStatus int
+	code       string
+	message    string
 }
 
 func (e *Error) Error() string {
@@ -32,10 +33,23 @@ func (e *Error) Message() string {
 
 func New(code string, message ...string) *Error {
 	err := &Error{
-		code: code,
+		code:       code,
+		httpStatus: 200,
 	}
 	if len(message) > 0 {
 		err.message = message[0]
 	}
 	return err
+}
+
+func (e *Error) SetHttpStatus(status int) *Error {
+	e.httpStatus = status
+	return e
+}
+
+func (e *Error) HttpStatus() int {
+	if e.httpStatus == 0 {
+		return 200
+	}
+	return e.httpStatus
 }

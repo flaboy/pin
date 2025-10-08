@@ -36,7 +36,13 @@ func (c *Context) RenderError(err error) error {
 	}
 	message := err.Error()
 	if userErr, ok := err.(*usererrors.Error); ok {
-		return c.RenderUserError(userErr.Message(), userErr.Code())
+		return c.RenderResponse(&Response{
+			Error: &ResponseError{
+				Message: userErr.Message(),
+				Type:    "user",
+				Key:     userErr.Code(),
+			},
+		}, userErr.HttpStatus())
 	}
 	return c.renderError("system", message, "error.system")
 }
