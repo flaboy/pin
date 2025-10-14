@@ -1,8 +1,9 @@
 package pin
 
 import (
-	"github.com/flaboy/pin/usererrors"
+	"fmt"
 
+	"github.com/flaboy/pin/usererrors"
 	"github.com/gin-gonic/gin"
 )
 
@@ -63,10 +64,26 @@ func (c *Context) renderError(error_type, message, key string) error {
 	}, code)
 }
 
-func (c *Context) Render(data any) error {
-	return c.RenderResponse(&Response{
-		Data: data,
-	}, 200)
+func (c *Context) Render(data any, metaPairs ...any) error {
+	rsp := &Response{Data: data}
+
+	// Parse meta key-value pairs
+	if len(metaPairs) > 0 {
+		if len(metaPairs)%2 != 0 {
+			return fmt.Errorf("meta pairs must be even number")
+		}
+		meta := make(map[string]interface{})
+		for i := 0; i < len(metaPairs); i += 2 {
+			key, ok := metaPairs[i].(string)
+			if !ok {
+				return fmt.Errorf("meta key must be string")
+			}
+			meta[key] = metaPairs[i+1]
+		}
+		rsp.Meta = meta
+	}
+
+	return c.RenderResponse(rsp, 200)
 }
 
 func (c *Context) RenderUserError(message, key string) error {
